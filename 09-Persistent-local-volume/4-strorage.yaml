@@ -1,0 +1,30 @@
+# this is defining what we want as a storage size for our mongo-db
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: mongo-storage-class
+
+---
+# this block is how we want it to be implemented
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: mongo-storage-class
+  hostPath:
+    path: /Users/opeyemiojo/tmp
+
+

@@ -1,0 +1,25 @@
+# this is defining what we want as a storage size for our mongo-db
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 7Gi
+  storageClassName: ebs-storage # this name must match with the name in the metadate section on StorageClass file
+
+---
+# this block is how we want it to be implemented
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: ebs-storage
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+ #encrypted: "true"
+#reclaimPolicy: Retain  # we could change thie Delete to Retain incase we don't want our volume to be deleted on instance termination, by default its Delete
+

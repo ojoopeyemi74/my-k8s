@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:3.6.5-jessie
+        volumeMounts:
+         - name: mongo-persistent-storage
+           mountPath: /data/db
+      volumes:
+        - name: mongo-persistent-storage
+          # pointer to the configuration of HOW we want the mount to be implemented
+          persistentVolumeClaim:
+            claimName: mongo-pvc  # this claimName must match with d metadata name in storage.yaml in the pvc file
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+# in related to this course this specific name is important, because it is specfied
+# in the position tracker code to look for this same as the dns name 
+  name: fleetman-mongodb
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    name: mondodb-port
+# we have the CLusterIP for our mongodb-service as we dont want to access it from the browser
+  type: ClusterIP
