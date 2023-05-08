@@ -1,3 +1,5 @@
+# KOPS SETUP
+
 - create an EC2 instance, named bootstrap
 
 - next: ssh into the bootstrap
