@@ -26,17 +26,17 @@ Now log out of your shell and back in again.
 
 Set up a group with the Permissions of:
 
-( you can find all the needed policy     -          https://eksctl.io/usage/minimum-iam-policies/)
+( you can find all the needed policy     -    https://eksctl.io/usage/minimum-iam-policies/)
 
+```
 AmazonEC2FullAccess
-IamLimitedAccess
 EksAllAccess
 AWSCloudFormationFullAccess
-
-- create an IAM limited access policy
+- create an inline policy for: Cluster Autoscaler
+- create an inline policy for: IamLimitedAccess
+```
 
 IamLimitedAccess
-
 ```
 
 {
@@ -157,6 +157,40 @@ EksAllAccess
 
 ```
 
+Add inline policy for Cluster Autoscaler
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "autoscaling:DescribeAutoScalingGroups",
+        "autoscaling:DescribeAutoScalingInstances",
+        "autoscaling:DescribeLaunchConfigurations",
+        "autoscaling:DescribeScalingActivities",
+        "autoscaling:DescribeTags",
+        "ec2:DescribeInstanceTypes",
+        "ec2:DescribeLaunchTemplateVersions"
+      ],
+      "Resource": ["*"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "autoscaling:SetDesiredCapacity",
+        "autoscaling:TerminateInstanceInAutoScalingGroup",
+        "ec2:DescribeImages",
+        "ec2:GetInstanceTypesFromInstanceRequirements",
+        "eks:DescribeNodegroup"
+      ],
+      "Resource": ["*"]
+    }
+  ]
+}
+
+```
+
 4: Create a user and add it to the group
 --------------------------
 
@@ -166,7 +200,7 @@ Use the console to add a user to your new group - also create generate user cred
 
 check your configureation
 ----------------------
-aws iam list-user
+aws eks list-clusters
 
 
 5: Install kubectl
@@ -179,17 +213,29 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v$RELEASE/bin
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
 
-Check the version with "kubectl version"
+Check the version with "kubectl version --client"
 
 
 6: Start your cluster!
 ----------------------
 
+```
+eksctl create cluster -f eks-setup.yaml 
+```
+
+7: ENABLE associate-iam-oidc-provider 
+---------------------------------------
+```
+eksctl utils associate-iam-oidc-provider \
+    --region eu-west-2 \
+    --cluster <cluster-name> \
+    --approve
+```
+
+
 eksctl create cluster --name fleetman --nodes-min=3  ( pvc has been stucked on pending on this version (persistentVolumeClaim) )
 
 eksctl create cluster --name fleetman --version 1.22 --nodes-min 3 ( pvc as been fine to create on this version )
-
-eksctl create cluster --name fleetman-new --version 1.22  --nodes-min=3 --node-type=t3.medium ( specifying the type of EC2 instance if you want, the default is m5.large if you didnt specify)
 
 
 Delete cluster
