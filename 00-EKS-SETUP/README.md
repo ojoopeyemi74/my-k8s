@@ -208,7 +208,7 @@ aws eks list-clusters
 
 Warning: check the current default kubernetes version supplied with EKS and install a matching version of kubectl
 
-export RELEASE=<enter default eks version number here. Eg 1.17.0>
+export RELEASE=<enter default eks version number here. Eg 1.26.0>
 curl -LO https://storage.googleapis.com/kubernetes-release/release/v$RELEASE/bin/linux/amd64/kubectl
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
@@ -220,26 +220,47 @@ Check the version with "kubectl version --client"
 ----------------------
 
 ```
-eksctl create cluster -f eks-setup.yaml 
+# Create Cluster
+eksctl create cluster --name=eksdemo1 \
+                      --region=us-east-1 \
+                      --zones=us-east-1a,us-east-1b \
+                      --without-nodegroup 
 ```
 
 7: ENABLE associate-iam-oidc-provider 
 ---------------------------------------
 ```
 eksctl utils associate-iam-oidc-provider \
-    --region eu-west-2 \
-    --cluster <cluster-name> \
+    --region us-east-1 \
+    --cluster eksdemo1\
     --approve
 ```
 
-
-eksctl create cluster --name fleetman --nodes-min=3  ( pvc has been stucked on pending on this version (persistentVolumeClaim) )
-
-eksctl create cluster --name fleetman --version 1.22 --nodes-min 3 ( pvc as been fine to create on this version )
-
-
+8: CREATE cluster node groups
+-----------------------------
+```
+eksctl create nodegroup --cluster=eksdemo1 \
+                        --region=us-east-1 \
+                        --name=eksdemo1-ng-private1 \
+                        --node-type=t3.medium \
+                        --nodes-min=2 \
+                        --nodes-max=4 \
+                        --node-volume-size=20 \
+                        --ssh-access \
+                        --ssh-public-key=ssh-key-us-east1 \
+                        --managed \
+                        --asg-access \
+                        --external-dns-access \
+                        --full-ecr-access \
+                        --appmesh-access \
+                        --alb-ingress-access \
+                        --node-private-networking   
+```
 Delete cluster
 ------------------
 eksctl delete cluster <cluster-name>
 
 e.g : eksctl delete cluster fleetman-new
+
+
+
