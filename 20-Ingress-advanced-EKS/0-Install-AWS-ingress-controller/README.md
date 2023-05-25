@@ -13,7 +13,7 @@ description: Learn to install AWS Load Balancer Controller for Ingress Implement
    
 
 # Verify if any IAM Service Accounts present in EKS Cluster
-eksctl get iamserviceaccount --cluster=eksdemo1
+eksctl get iamserviceaccount --cluster eksdemo1
 Observation:
 1. No k8s Service accounts as of now. 
 
@@ -75,7 +75,7 @@ Kalyans-MacBook-Pro:08-01-Load-Balancer-Controller-Install kdaida$ aws iam creat
 - Make a note of Policy ARN as we are going to use that in next step when creating IAM Role.
 ```t
 # Policy ARN 
-Policy ARN:  arn:aws:iam::180789647333:policy/AWSLoadBalancerControllerIAMPolicy
+Policy ARN:  arn:aws:iam::772745136297:policy/AWSLoadBalancerControllerIAMPolicy
 ```
 
 
@@ -107,7 +107,7 @@ eksctl create iamserviceaccount \
   --cluster=eksdemo1 \
   --namespace=kube-system \
   --name=aws-load-balancer-controller \
-  --attach-policy-arn=arn:aws:iam::180789647333:policy/AWSLoadBalancerControllerIAMPolicy \
+  --attach-policy-arn=arn:aws:iam::772745136297:policy/AWSLoadBalancerControllerIAMPolicy\
   --override-existing-serviceaccounts \
   --approve
 ```
@@ -227,7 +227,7 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   --set serviceAccount.create=false \
   --set serviceAccount.name=aws-load-balancer-controller \
   --set region=us-east-1 \
-  --set vpcId=vpc-0165a396e41e292a3 \
+  --set vpcId=vpc-0c669536bcd340a82 \
   --set image.repository=602401143452.dkr.ecr.us-east-1.amazonaws.com/amazon/aws-load-balancer-controller
 ```
 - **Sample output for AWS Load Balancer Controller Install steps**

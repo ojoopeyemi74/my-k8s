@@ -263,4 +263,15 @@ eksctl delete cluster <cluster-name>
 e.g : eksctl delete cluster fleetman-new
 
 
+# Delete Node Group
+eksctl delete nodegroup --cluster=<clusterName> --name=<nodegroupName>
+eksctl delete nodegroup --cluster=eksdemo1 --name=eksdemo1-ng-private1
+```
 
+## Step-02: Delete Cluster  
+- We can delete cluster using `eksctl delete cluster`
+```
+# Delete Cluster
+eksctl delete cluster <clusterName>
+eksctl delete cluster eksdemo1
+```
