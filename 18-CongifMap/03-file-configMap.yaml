@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue
+spec:
+  selector:
+    matchLabels:
+      app: queue
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: queue
+    spec:
+      containers:
+      - name: queue
+        image: richardchesterwood/k8s-fleetman-queue:resources
+        resources:
+          limits:
+            memory: 300Mi
+            cpu: 100m
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: position-simulator
+spec:
+  selector:
+    matchLabels:
+      app: position-simulator
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: position-simulator
+    spec:
+      containers:
+      - name: position-simulator
+        image: richardchesterwood/k8s-fleetman-position-simulator:resources
+        resources:
+          limits:
+            memory: 300Mi
+            cpu: 100m
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: production-microservice
+
+        volumeMounts:
+          - name:  database-config-volume
+            mountPath: /etc/any/directory/config
+      volumes:
+        - name: database-config-volume
+          configMap:
+           name: global-database-config-v3
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: global-database-config-v3
+data:
+# key : and we use the | so we can pass all the value as a single file for the key
+  database.properties: |
+    database.url=https://dbserver.somewhere.com:3306
+    database.password=Password

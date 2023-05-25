@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: position-simulator
+spec:
+  selector:
+    matchLabels:
+      app: position-simulator
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: position-simulator
+    spec:
+      containers:
+      - name: position-simulator
+        image: richardchesterwood/k8s-fleetman-position-simulator:resources
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: production-microservice
+
+        envFrom:
+        - configMapRef:
+           name: global-database-config-v5
+
+        resources:
+          limits:
+            memory: 300Mi
+            cpu: 100m
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: global-database-config
+data:
+  DATABASE_URL: "https://dbserver.somewhere.com:3306"
+  DATABASE_PASSWORD: "Password"
