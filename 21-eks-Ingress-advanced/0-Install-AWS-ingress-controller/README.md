@@ -227,7 +227,7 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   --set serviceAccount.create=false \
   --set serviceAccount.name=aws-load-balancer-controller \
   --set region=us-east-1 \
-  --set vpcId=vpc-0c669536bcd340a82 \
+  --set vpcId=vpc-0e3a45f6d3ac88bad \
   --set image.repository=602401143452.dkr.ecr.us-east-1.amazonaws.com/amazon/aws-load-balancer-controller
 ```
 - **Sample output for AWS Load Balancer Controller Install steps**

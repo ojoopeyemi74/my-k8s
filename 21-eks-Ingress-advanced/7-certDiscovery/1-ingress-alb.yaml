@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: default
+  name: ingress-certdiscoveryhost-demo
+  annotations:
+    # Load balancer name
+    alb.ingress.kubernetes.io/load-balancer-name: ingress-certdiscoveryhost
+    # Ingress Core Setting
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    # Health Check Setting
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '15'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/success-codes: '200'
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:772745136297:certificate/9b1e0883-3558-43c9-b7db-cb1eb274b093
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    external-dns.alpha.kubernetes.io/hostname: default102.neuniktechnologygroup.com 
+spec:
+  ingressClassName: my-aws-ingress-class
+  defaultBackend:
+    service:
+      name: webapp2-service
+      port:
+        number: 80 
+  rules:
+  - host: certdiscovery.neuniktechnologygroup.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webapp1-service
+            port:
+              number: 80

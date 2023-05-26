@@ -1,10 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-context-pathbased-routing
+  name: ingress-external-dns
   annotations:
     # Load balancer name
-    alb.ingress.kubernetes.io/load-balancer-name: ingress-cpr
+    alb.ingress.kubernetes.io/load-balancer-name: ingress-external-dns
     # Ingress Core Setting
     alb.ingress.kubernetes.io/scheme: internet-facing
     # Health Check Setting
